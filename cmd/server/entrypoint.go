@@ -36,6 +36,11 @@ func StartProxySvr(cliCtx *cli.Context) error {
 	}
 	server := server.NewServer(cliCtx.String(server.ListenAddrFlagName), cliCtx.Int(server.PortFlagName), da, log, m)
 
+	{
+		fmt.Println("--------------------debug")
+		fmt.Println(cliCtx.Bool("memstore.enabled"))
+		fmt.Println("--------------------debug")
+	}
 	if err := server.Start(); err != nil {
 		return fmt.Errorf("failed to start the DA server")
 	} else {

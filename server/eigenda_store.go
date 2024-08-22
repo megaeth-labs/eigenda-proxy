@@ -115,7 +115,9 @@ func (e EigenDAStore) Put(ctx context.Context, value []byte) (comm []byte, err e
 			} else if !errors.Is(err, verify.ErrBatchMetadataHashNotFound) {
 				return nil, err
 			} else {
+				fmt.Println("debug, err:", err.Error())
 				e.log.Info("Blob confirmed, waiting for sufficient confirmation depth...", "targetDepth", e.cfg.EthConfirmationDepth)
+				done = true
 			}
 		}
 	}

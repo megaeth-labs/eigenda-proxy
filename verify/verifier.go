@@ -58,6 +58,7 @@ func (v *Verifier) VerifyCert(cert *Certificate) error {
 		return nil
 	}
 
+	fmt.Println("debug1")
 	// 1 - verify batch
 	header := binding.IEigenDAServiceManagerBatchHeader{
 		BlobHeadersRoot:       [32]byte(cert.Proof().GetBatchMetadata().GetBatchHeader().GetBatchRoot()),
@@ -71,12 +72,14 @@ func (v *Verifier) VerifyCert(cert *Certificate) error {
 		return err
 	}
 
+	fmt.Println("debug2")
 	// 2 - verify merkle inclusion proof
 	err = v.cv.VerifyMerkleProof(cert.Proof().GetInclusionProof(), cert.BatchHeaderRoot(), cert.Proof().GetBlobIndex(), cert.ReadBlobHeader())
 	if err != nil {
 		return err
 	}
 
+	fmt.Println("debug3")
 	// 3 - verify security parameters
 	err = v.VerifySecurityParams(cert.ReadBlobHeader(), header)
 	if err != nil {
