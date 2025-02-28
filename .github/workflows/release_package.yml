@@ -1,0 +1,38 @@
+name: release_package
+
+on:
+  workflow_dispatch: {}
+  push:
+    tags:
+      - v*
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v3
+
+    - name: Set up Go
+      uses: actions/setup-go@v3
+      with:
+        go-version: 1.21
+
+    - name: Build App
+      run: make 
+
+    - name: Archive Package
+      run: |
+            if [[ "$GITHUB_REF" == refs/tags/* ]]; then
+              ARTIFACT_NAME="eigenda-proxy-${{ github.ref_name }}"
+            else
+              SHORT_COMMIT_ID=$(git rev-parse --short HEAD)
+              ARTIFACT_NAME="eigenda-proxy-${SHORT_COMMIT_ID}"
+            fi
+            NEXUS_UPLOAD_URL="${{ secrets.NEXUS_URL }}/repository/eigenda-proxy"
+                    ARTIFACT_NAME="eigenda-${SHORT_COMMIT_ID}"
+                    ARTIFACT_PATH="./bin/eigenda-proxy"
+                    curl -u ${{ secrets.NEXUS_URL }}:${{ secrets.NEXUS_PWD }} \
+                        -X PUT "$NEXUS_UPLOAD_URL/$ARTIFACT_NAME" \
+                        -T $ARTIFACT_PATH \
+                        -H "Content-Type: application/octet-stream" \
+                        -v    
