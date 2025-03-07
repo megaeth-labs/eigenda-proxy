@@ -102,7 +102,6 @@ func (e Store) Put(ctx context.Context, value []byte) ([]byte, error) {
 				done = true
 			case errors.Is(err, verify.ErrBatchMetadataHashNotFound):
 				e.log.Info("Blob confirmed, waiting for sufficient confirmation depth...", "targetDepth", e.cfg.EthConfirmationDepth)
-				done = true
 			default:
 				return nil, err
 			}
